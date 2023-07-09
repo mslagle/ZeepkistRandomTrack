@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeepkist.RandomTrack", "Zeepkist.RandomTrack\Zeepkist.RandomTrack.csproj", "{7065C8A2-3BF9-42AB-8ED5-8F6DD1785139}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeepkist.RandomTrack.Test", "Zeepkist.RandomTrack.Test\Zeepkist.RandomTrack.Test.csproj", "{E4002635-07DC-4924-9933-4843424E3152}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7065C8A2-3BF9-42AB-8ED5-8F6DD1785139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7065C8A2-3BF9-42AB-8ED5-8F6DD1785139}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7065C8A2-3BF9-42AB-8ED5-8F6DD1785139}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7065C8A2-3BF9-42AB-8ED5-8F6DD1785139}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4002635-07DC-4924-9933-4843424E3152}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4002635-07DC-4924-9933-4843424E3152}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4002635-07DC-4924-9933-4843424E3152}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4002635-07DC-4924-9933-4843424E3152}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8AB8E099-D24C-4C24-9712-BAF3991A7A87}
+	EndGlobalSection
+EndGlobal

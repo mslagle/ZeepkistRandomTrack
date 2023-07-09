@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>Zeepkist.RandomTrack</AssemblyName>
+    <Description>Randomizes tracks in the editor</Description>
+    <Version>1.0.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json;
+      https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+    <RootNamespace>Zeepkist.RandomTrack</RootNamespace>
+    <DebugType>Full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Core" Version="5.*" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+    <PackageReference Include="Zeepkist.GameLibs" Version="1.0.0-alpha.15.29.348" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="randomtrackparts.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+ 
+  <Target Name="CopyToZeepkist" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug'">
+    <Message Text="Creating mono debug edition of plugin" Importance="high" />
+    <Exec Command="&quot;C:\Program Files\Unity 2021.3.10f1\Editor\Data\MonoBleedingEdge\bin\mono.exe&quot; &quot;C:\Program Files\Unity 2021.3.10f1\Editor\Data\MonoBleedingEdge\lib\mono\4.5\pdb2mdb.exe&quot; $(ProjectName).dll" WorkingDirectory="$(TargetDir)" />
+
+    <ItemGroup>
+      <OutputFiles Include="$(TargetDir)$(ProjectName).*;$(TargetDir)*.csv" />
+    </ItemGroup>
+    <Copy SourceFiles="%(OutputFiles.Fullpath)" DestinationFolder="M:\SteamLibrary\steamapps\common\Zeepkist\BepInEx\plugins\random" />
+  </Target>
+</Project>
