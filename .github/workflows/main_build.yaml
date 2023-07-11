@@ -43,4 +43,4 @@ jobs:
           game: ${{ vars.GAME_ID }}
           mod: ${{ vars.MOD_ID }}
           path: mod.zip
-          version: ${{ steps.gitversion.outputs.version }}
+          version: ${{ env.GitVersion_MajorMinorPatch }}
