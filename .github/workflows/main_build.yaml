@@ -44,3 +44,4 @@ jobs:
           mod: ${{ vars.MOD_ID }}
           path: mod.zip
           version: ${{ env.GitVersion_MajorMinorPatch }}
+          changelog-path: changelog.txt
