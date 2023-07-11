@@ -1,0 +1,20 @@
+Name,Id,Starting Vector,Ending Vector,Offset
+Start Track,1,0,0,0
+Straight Track,0,0,0,0
+End Track,2,0,0,0
+Booster Track,69,0,0,0
+Road Checkpoint,22,0,0,0
+Road Curve 1,3,0,"0,-90,0",0
+Road Curve 2,4,0,"0,-90,0","1,0,0"
+Road Curve 3,14,0,"0,-90,0","2,0,0"
+Road Curve 4,15,0,"0,-90,0","3,0,0"
+S-Bend 2,1189,0,0,"-1,0,0"
+S-Bend 3,1190,0,0,"-1,0,0"
+S-Bend 4,1191,0,0,"-1,0,0"
+Step Up Short,7,0,0,"0,1,0"
+Step Up Medium,5,0,0,"0,1,0"
+Step Up Long,6,0,0,"0,1,0"
+Step Up 4L,1255,0,0,"0,1,0"
+Road Slope Bottom Medium,9,0,"45,0,0","0,2,0"
+Road Slope,10,"45,0,0","45,0,0","0,2,0"
+Road Slope Top Medium,8,"45,0,0",0,"0,2,0"

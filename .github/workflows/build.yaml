@@ -1,0 +1,21 @@
+name: Feature builds
+on: 
+  push:
+    branches:
+      - '*'
+      - '!main'
+
+jobs:
+  builds:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Build mod file
+        run: |
+          Compress-Archive ./Zeepkist.RandomTrack/bin/Release/net472/Zeepkist.RandomTrack.dll,./Zeepkist.RandomTrack/bin/Release/net472/*.csv mod.zip
+
