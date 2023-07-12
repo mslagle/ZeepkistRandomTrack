@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Zeepkist.RandomTrack.Models;
 using Zeepkist.RandomTrack.Repositories;
-using Zeepkist.RandomTrack.Utils;
 
 namespace Zeepkist.RandomTrack
 {
@@ -33,9 +32,9 @@ namespace Zeepkist.RandomTrack
 
         private readonly IZeepkistRepository zeepkist;
 
-        public RandomTrackGenerator(IZeepkistRepository zeepkist) {
+        public RandomTrackGenerator(IZeepkistRepository zeepkist, IRandomPartRepository randomPartRepository) {
             this.zeepkist = zeepkist;
-            this.randomParts = CsvParser.DecodeCsv();
+            this.randomParts = randomPartRepository.GetParts();
         }
 
         public void Create()

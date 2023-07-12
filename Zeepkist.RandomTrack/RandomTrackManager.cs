@@ -20,7 +20,7 @@ namespace Zeepkist.RandomTrack
             RandomTrackManager.central = central;
             RandomTrackManager.inspector = central.inspector;
 
-            RandomTrackManager.generator = new RandomTrackGenerator(new ZeepkistRepository());
+            RandomTrackManager.generator = new RandomTrackGenerator(new ZeepkistRepository(), new RandomPartRepository());
         }
 
         public static void LevelEditorDestroy()
