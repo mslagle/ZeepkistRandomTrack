@@ -199,5 +199,26 @@ namespace Zeepkist.RandomTrack
 
             return selectedTrackPart;
         }
+
+        public void UpdateCamera()
+        {
+            if (!isBuilding)
+            {
+                return;
+            }
+
+            // Force camera to look at new piece
+            Vector3 directionToLook = (currentPosition - Camera.main.transform.position);
+            Quaternion rotationToLook = Quaternion.LookRotation(directionToLook);
+            Quaternion newCameraRotation = Quaternion.Slerp(Camera.main.transform.rotation, rotationToLook, 3 * Time.deltaTime);
+            Camera.main.transform.rotation = newCameraRotation;
+
+            // Move camera to next to new piece
+            Vector3 cameraOffset = new Vector3(-60, 30, 0);  // To the left side of the piece
+            Vector3 cameraOffsetRotated = currentQuaternion * cameraOffset;
+            Vector3 newCameraPositionEndpoint = currentPosition + cameraOffsetRotated;
+            Vector3 newCameraPosition = Vector3.Lerp(Camera.main.transform.position, newCameraPositionEndpoint, Time.deltaTime);
+            Camera.main.transform.position = newCameraPosition;
+        }
     }
 }

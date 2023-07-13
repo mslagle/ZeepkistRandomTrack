@@ -25,7 +25,10 @@ namespace Zeepkist.RandomTrack
 
         public static void LevelEditorDestroy()
         {
-
+            if (generator != null)
+            {
+                generator.isBuilding = false;
+            }
         }
 
         public static void LevelEditorUpdate()
@@ -55,6 +58,14 @@ namespace Zeepkist.RandomTrack
             {
                 UnityEngine.Debug.Log("Adding a finish to the track");
                 generator.End();
+            }
+        }
+
+        internal static void MoveCamera()
+        {
+            if (generator != null)
+            {
+                generator.UpdateCamera();
             }
         }
     }

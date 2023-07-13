@@ -22,12 +22,6 @@
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
     <PackageReference Include="Zeepkist.GameLibs" Version="1.0.0-alpha.15.29.348" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="randomtrackparts.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
  
   <Target Name="CopyToZeepkist" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug'">
     <Message Text="Creating mono debug edition of plugin" Importance="high" />

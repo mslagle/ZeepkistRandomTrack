@@ -31,23 +31,23 @@ namespace Zeepkist.RandomTrack.Repositories
             parts.Add(new RandomTrackPart("Straight", 0, new Vector3(), new Vector3(), new Vector3()));
 
             parts.Add(new RandomTrackPart("Road Curve 1", 3, new Vector3(), new Vector3(0, -90, 0), new Vector3()));
-            parts.Add(new RandomTrackPart("Road Curve 2", 4, new Vector3(), new Vector3(0, -90, 0), new Vector3(1, 0, 0)));
-            parts.Add(new RandomTrackPart("Road Curve 3", 14, new Vector3(), new Vector3(0, -90, 0), new Vector3(2, 0, 0)));
-            parts.Add(new RandomTrackPart("Road Curve 4", 15, new Vector3(), new Vector3(0, -90, 0), new Vector3(3, 0, 0)));
+            parts.Add(new RandomTrackPart("Road Curve 2", 4, new Vector3(), new Vector3(0, -90, 0), new Vector3(16, 0, 0)));
+            parts.Add(new RandomTrackPart("Road Curve 3", 14, new Vector3(), new Vector3(0, -90, 0), new Vector3(32, 0, 0)));
+            parts.Add(new RandomTrackPart("Road Curve 4", 15, new Vector3(), new Vector3(0, -90, 0), new Vector3(48, 0, 0)));
 
-            parts.Add(new RandomTrackPart("S-Bend 2", 1189, new Vector3(), new Vector3(), new Vector3(-1, 0, 0)));
-            parts.Add(new RandomTrackPart("S-Bend 3", 1190, new Vector3(), new Vector3(), new Vector3(-1, 0, 0)));
-            parts.Add(new RandomTrackPart("S-Bend 4", 1191, new Vector3(), new Vector3(), new Vector3(-1, 0, 0)));
+            parts.Add(new RandomTrackPart("S-Bend 2", 1189, new Vector3(), new Vector3(), new Vector3(-16, 0, 0)));
+            parts.Add(new RandomTrackPart("S-Bend 3", 1190, new Vector3(), new Vector3(), new Vector3(-16, 0, 0)));
+            parts.Add(new RandomTrackPart("S-Bend 4", 1191, new Vector3(), new Vector3(), new Vector3(-16, 0, 0)));
 
             // Hill track pieces
-            parts.Add(new RandomTrackPart("Step Up Short", 7, new Vector3(), new Vector3(), new Vector3(0,1,0)));
-            parts.Add(new RandomTrackPart("Step Up Medium", 5, new Vector3(), new Vector3(), new Vector3(0,1,0)));
-            parts.Add(new RandomTrackPart("Step Up Long", 6, new Vector3(), new Vector3(), new Vector3(0,1,0)));
-            parts.Add(new RandomTrackPart("Step Up 4L", 1255, new Vector3(), new Vector3(), new Vector3(0,1,0)));
+            parts.Add(new RandomTrackPart("Step Up Short", 7, new Vector3(), new Vector3(), new Vector3(0,8,0)));
+            parts.Add(new RandomTrackPart("Step Up Medium", 5, new Vector3(), new Vector3(), new Vector3(0,8,0)));
+            parts.Add(new RandomTrackPart("Step Up Long", 6, new Vector3(), new Vector3(), new Vector3(0,8,0)));
+            parts.Add(new RandomTrackPart("Step Up 4L", 1255, new Vector3(), new Vector3(), new Vector3(0,8,0)));
 
-            parts.Add(new RandomTrackPart("Road Slope Bottom", 9, new Vector3(), new Vector3(45,0,0), new Vector3(0, 2, 0)));
-            parts.Add(new RandomTrackPart("Road Slope", 10, new Vector3(45,0,0), new Vector3(45,0,0), new Vector3(0, 2, 0)));
-            parts.Add(new RandomTrackPart("Step Up 4L", 8, new Vector3(45,0,0), new Vector3(), new Vector3(0, 2, 0)));
+            parts.Add(new RandomTrackPart("Road Slope Bottom", 9, new Vector3(), new Vector3(45,0,0), new Vector3(0, 16, 0)));
+            parts.Add(new RandomTrackPart("Road Slope", 10, new Vector3(45,0,0), new Vector3(45,0,0), new Vector3(0, 16, 0)));
+            parts.Add(new RandomTrackPart("Step Up 4L", 8, new Vector3(45,0,0), new Vector3(), new Vector3(0, 16, 0)));
 
             return parts;
         }
