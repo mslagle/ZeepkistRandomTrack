@@ -14,6 +14,7 @@ namespace Zeepkist.RandomTrack
         public static LEV_LevelEditorCentral central;
 
         public static RandomTrackGenerator generator;
+        public static TwitchManager twitchManager;
 
         public static void LevelEditorAwake(LEV_LevelEditorCentral central)
         {
@@ -21,6 +22,7 @@ namespace Zeepkist.RandomTrack
             RandomTrackManager.inspector = central.inspector;
 
             RandomTrackManager.generator = new RandomTrackGenerator(new ZeepkistRepository(), new RandomPartRepository());
+            //RandomTrackManager.twitchManager = new TwitchManager();
         }
 
         public static void LevelEditorDestroy()
@@ -29,6 +31,12 @@ namespace Zeepkist.RandomTrack
             {
                 generator.isBuilding = false;
             }
+
+            RandomTrackManager.central = null;
+            RandomTrackManager.inspector = null;
+
+            RandomTrackManager.generator = null;
+            RandomTrackManager.twitchManager = null;
         }
 
         public static void LevelEditorUpdate()
