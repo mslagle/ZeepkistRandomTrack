@@ -1,15 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Zeepkist.RandomTrack.Utils;
 
 namespace Zeepkist.RandomTrack.Test
 {
     [TestClass]
-    public class CsvParserTests
+    public class Test
     {
         [TestMethod]
         public void VerifyCsvSplitting()
         {
-            var parts = CsvParser.DecodeCsv();
+            var temp = new TwitchManager();
+            temp.Start();
         }
     }
 }

@@ -14,18 +14,29 @@ namespace Zeepkist.RandomTrack
         public static LEV_LevelEditorCentral central;
 
         public static RandomTrackGenerator generator;
+        public static TwitchManager twitchManager;
 
         public static void LevelEditorAwake(LEV_LevelEditorCentral central)
         {
             RandomTrackManager.central = central;
             RandomTrackManager.inspector = central.inspector;
 
-            RandomTrackManager.generator = new RandomTrackGenerator(new ZeepkistRepository());
+            RandomTrackManager.generator = new RandomTrackGenerator(new ZeepkistRepository(), new RandomPartRepository());
+            //RandomTrackManager.twitchManager = new TwitchManager();
         }
 
         public static void LevelEditorDestroy()
         {
+            if (generator != null)
+            {
+                generator.isBuilding = false;
+            }
 
+            RandomTrackManager.central = null;
+            RandomTrackManager.inspector = null;
+
+            RandomTrackManager.generator = null;
+            RandomTrackManager.twitchManager = null;
         }
 
         public static void LevelEditorUpdate()
@@ -55,6 +66,14 @@ namespace Zeepkist.RandomTrack
             {
                 UnityEngine.Debug.Log("Adding a finish to the track");
                 generator.End();
+            }
+        }
+
+        internal static void MoveCamera()
+        {
+            if (generator != null)
+            {
+                generator.UpdateCamera();
             }
         }
     }

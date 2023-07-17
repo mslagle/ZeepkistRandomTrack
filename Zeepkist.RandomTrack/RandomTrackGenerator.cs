@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Zeepkist.RandomTrack.Models;
 using Zeepkist.RandomTrack.Repositories;
-using Zeepkist.RandomTrack.Utils;
 
 namespace Zeepkist.RandomTrack
 {
@@ -33,9 +32,9 @@ namespace Zeepkist.RandomTrack
 
         private readonly IZeepkistRepository zeepkist;
 
-        public RandomTrackGenerator(IZeepkistRepository zeepkist) {
+        public RandomTrackGenerator(IZeepkistRepository zeepkist, IRandomPartRepository randomPartRepository) {
             this.zeepkist = zeepkist;
-            this.randomParts = CsvParser.DecodeCsv();
+            this.randomParts = randomPartRepository.GetParts();
         }
 
         public void Create()
@@ -199,6 +198,27 @@ namespace Zeepkist.RandomTrack
             }
 
             return selectedTrackPart;
+        }
+
+        public void UpdateCamera()
+        {
+            if (!isBuilding)
+            {
+                return;
+            }
+
+            // Force camera to look at new piece
+            Vector3 directionToLook = (currentPosition - Camera.main.transform.position);
+            Quaternion rotationToLook = Quaternion.LookRotation(directionToLook);
+            Quaternion newCameraRotation = Quaternion.Slerp(Camera.main.transform.rotation, rotationToLook, 3 * Time.deltaTime);
+            Camera.main.transform.rotation = newCameraRotation;
+
+            // Move camera to next to new piece
+            Vector3 cameraOffset = new Vector3(-60, 30, 0);  // To the left side of the piece
+            Vector3 cameraOffsetRotated = currentQuaternion * cameraOffset;
+            Vector3 newCameraPositionEndpoint = currentPosition + cameraOffsetRotated;
+            Vector3 newCameraPosition = Vector3.Lerp(Camera.main.transform.position, newCameraPositionEndpoint, Time.deltaTime);
+            Camera.main.transform.position = newCameraPosition;
         }
     }
 }

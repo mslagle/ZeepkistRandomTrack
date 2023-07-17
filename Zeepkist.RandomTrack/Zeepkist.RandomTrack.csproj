@@ -20,13 +20,8 @@
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+    <PackageReference Include="TwitchLib.Client" Version="3.3.1" />
     <PackageReference Include="Zeepkist.GameLibs" Version="1.0.0-alpha.15.29.348" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="randomtrackparts.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
  
   <Target Name="CopyToZeepkist" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug'">
@@ -34,7 +29,7 @@
     <Exec Command="&quot;C:\Program Files\Unity 2021.3.10f1\Editor\Data\MonoBleedingEdge\bin\mono.exe&quot; &quot;C:\Program Files\Unity 2021.3.10f1\Editor\Data\MonoBleedingEdge\lib\mono\4.5\pdb2mdb.exe&quot; $(ProjectName).dll" WorkingDirectory="$(TargetDir)" />
 
     <ItemGroup>
-      <OutputFiles Include="$(TargetDir)$(ProjectName).*;$(TargetDir)*.csv" />
+      <OutputFiles Include="$(TargetDir)$(ProjectName).*;$(TargetDir)Twitch*.dll;$(TargetDir)Microsoft*.dll" />
     </ItemGroup>
     <Copy SourceFiles="%(OutputFiles.Fullpath)" DestinationFolder="M:\SteamLibrary\steamapps\common\Zeepkist\BepInEx\plugins\random" />
   </Target>

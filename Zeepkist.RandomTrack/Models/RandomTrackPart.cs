@@ -20,5 +20,19 @@ namespace Zeepkist.RandomTrack.Models
         {
             return $"[{Id}] {Name}";
         }
+
+        public RandomTrackPart()
+        {
+
+        }
+
+        public RandomTrackPart(string name, int id, Vector3 startingVector, Vector3 endingVector, Vector3 offset)
+        {
+            Name = name;
+            Id = id;
+            StartingVector = startingVector;
+            EndingVector = endingVector;
+            Offset = offset;
+        }
     }
 }

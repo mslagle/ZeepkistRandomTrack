@@ -1,1 +1,2 @@
-- Initial version of the mod
+- Fixed bug causing mod activation outside of editor
+- Migrated configuration to code
