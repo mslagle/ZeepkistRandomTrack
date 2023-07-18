@@ -55,7 +55,7 @@ namespace Zeepkist.RandomTrack.Repositories
             central.selection.DeselectAllBlocks(true, "ClickNothing");
         }
 
-        public void CreateLabel(string text, Vector2 position)
+        public void CreateLabel(string text, LabelPosition position)
         {
             GUIStyle labelStyle = new GUIStyle(GUI.skin.box);
             labelStyle.wordWrap = true;
@@ -71,6 +71,10 @@ namespace Zeepkist.RandomTrack.Repositories
             boxRect.width = newSize.x;
             boxRect.height = newSize.y;
 
+            if (position == LabelPosition.BottomLeft)
+            {
+
+            }
             Vector2 bottomScreenPosition = new Vector2(Display.main.renderingWidth / 2 - boxRect.width / 2, Display.main.renderingHeight - boxRect.height - 50);
             boxRect.position = bottomScreenPosition;
             GUI.Box(boxRect, labelContent, labelStyle);
