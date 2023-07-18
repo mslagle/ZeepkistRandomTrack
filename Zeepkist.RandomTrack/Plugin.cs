@@ -34,10 +34,34 @@ namespace Zeepkist.RandomTrack
             Plugin.KeyEndRandomTrack = this.Config.Bind<KeyCode>("Keys", "End Random Track", KeyCode.Keypad3, "Pressing this will end the track with a finish");
             
             Plugin.CameraFollowsTrack = this.Config.Bind<bool>("Plugin", "Camera Follows Track", true, "The camera will follow new track pieces as they appear");
-            // Plugin.TwitchApiKey = this.Config.Bind<string>("Plugin", "Twitch Api Key", "", "Twitch API key to enable Twitch Voting.  Remove to disable this mode");
-            // Plugin.TwitchUsername = this.Config.Bind<string>("Plugin", "Twitch Username", "", "Twitch Username to enable Twitch Voting.  Remove to disable this mode");
+            Plugin.TwitchApiKey = this.Config.Bind<string>("Plugin", "Twitch Api Key", "", "Twitch API key to enable Twitch Voting.  Remove to disable this mode");
+            Plugin.TwitchUsername = this.Config.Bind<string>("Plugin", "Twitch Username", "", "Twitch Username to enable Twitch Voting.  Remove to disable this mode");
 
             //Plugin.AverageSlope = this.Config.Bind<int>("Track", "Average Slope", 5, "The average grade/slope the entire track will aim to have");
+        }
+
+        public void OnGUI()
+        {
+            if (RandomTrackManager.twitchManager?.TwitchModActive == true)
+            {
+                GUIStyle labelStyle = new GUIStyle(GUI.skin.box);
+                labelStyle.wordWrap = true;
+                labelStyle.alignment = TextAnchor.MiddleCenter;
+                labelStyle.fontSize = Mathf.FloorToInt(Screen.height / 40);
+                labelStyle.normal.textColor = Color.white;
+
+                GUIContent labelContent = new GUIContent("Twitch Mod Activated");
+                Vector2 labelSize = labelStyle.CalcSize(labelContent);
+                int padding = Mathf.CeilToInt(Screen.width / 200f);
+                Vector2 newSize = new Vector2(labelSize.x + padding, labelSize.y + padding);
+                Rect boxRect = new Rect(0, 0, 0, 0);
+                boxRect.width = newSize.x;
+                boxRect.height = newSize.y;
+
+                Vector2 bottomScreenPosition = new Vector2(Display.main.renderingWidth / 2 - boxRect.width / 2, Display.main.renderingHeight - boxRect.height - 50);
+                boxRect.position = bottomScreenPosition;
+                GUI.Box(boxRect, labelContent, labelStyle);
+            }
         }
 
         private void OnDestroy()

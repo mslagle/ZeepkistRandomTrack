@@ -22,7 +22,7 @@ namespace Zeepkist.RandomTrack
             RandomTrackManager.inspector = central.inspector;
 
             RandomTrackManager.generator = new RandomTrackGenerator(new ZeepkistRepository(), new RandomPartRepository());
-            //RandomTrackManager.twitchManager = new TwitchManager();
+            RandomTrackManager.twitchManager = new TwitchManager(new TwitchRepository());
         }
 
         public static void LevelEditorDestroy()
@@ -47,8 +47,10 @@ namespace Zeepkist.RandomTrack
         public static void CreateTrack() {
             if (generator != null)
             {
-                UnityEngine.Debug.Log("Creating a new random track");
-                generator.Create();
+                twitchManager.Start();
+
+                //UnityEngine.Debug.Log("Creating a new random track");
+                //generator.Create();
             }
         }
 

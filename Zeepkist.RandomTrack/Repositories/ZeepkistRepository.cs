@@ -54,5 +54,32 @@ namespace Zeepkist.RandomTrack.Repositories
         {
             central.selection.DeselectAllBlocks(true, "ClickNothing");
         }
+
+        public void CreateLabel(string text, Vector2 position)
+        {
+            GUIStyle labelStyle = new GUIStyle(GUI.skin.box);
+            labelStyle.wordWrap = true;
+            labelStyle.alignment = TextAnchor.MiddleCenter;
+            labelStyle.fontSize = Mathf.FloorToInt(Screen.height / 40);
+            labelStyle.normal.textColor = Color.white;
+
+            GUIContent labelContent = new GUIContent(text);
+            Vector2 labelSize = labelStyle.CalcSize(labelContent);
+            int padding = Mathf.CeilToInt(Screen.width / 200f);
+            Vector2 newSize = new Vector2(labelSize.x + padding, labelSize.y + padding);
+            Rect boxRect = new Rect(0, 0, 0, 0);
+            boxRect.width = newSize.x;
+            boxRect.height = newSize.y;
+
+            Vector2 bottomScreenPosition = new Vector2(Display.main.renderingWidth / 2 - boxRect.width / 2, Display.main.renderingHeight - boxRect.height - 50);
+            boxRect.position = bottomScreenPosition;
+            GUI.Box(boxRect, labelContent, labelStyle);
+        }
+    }
+
+    public enum LabelPosition
+    {
+        BottomLeft,
+        TopLeft
     }
 }
