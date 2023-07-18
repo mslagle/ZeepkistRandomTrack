@@ -17,8 +17,10 @@ namespace Zeepkist.RandomTrack
         private readonly ITwitchRepository twitchRepository;
         public bool TwitchModActive { get; set; }
 
-        public Dictionary<string, TwitchActions> VotedActions = new Dictionary<string, TwitchActions>();
+        public Dictionary<string, TrackPartType> VotedActions = new Dictionary<string, TrackPartType>();
         Timer votingTimer = new Timer(30 * 1000);
+
+        public event EventHandler<List<TrackPartType>> OnVotedActions;
 
         public TwitchManager(ITwitchRepository twitchRepository) 
         { 
@@ -33,8 +35,34 @@ namespace Zeepkist.RandomTrack
 
         private void VotingTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            List<TwitchActions> votedActions = VotedActions.Values.ToList();
+            List<TrackPartType> votedActions = VotedActions.Values.ToList();
             var groupedActions = votedActions.GroupBy(x => x).OrderByDescending(x => x.Count());
+
+            int count = 0;
+            List<TrackPartType> selectedActions = new List<TrackPartType>();
+            foreach (var action in groupedActions)
+            {
+                if(count == 0)
+                {
+                    count = action.Count();
+                    selectedActions.Add(action.Key);
+                } else if (count == action.Count())
+                {
+                    selectedActions.Add(action.Key);
+                }
+            }
+
+            if (count == 0)
+            {
+                twitchRepository.SendMessage("No pieces were voted on, selecting a random piece.");
+            } else
+            {
+                twitchRepository.SendMessage($"The following pieces were voted on: {string.Join(", ", selectedActions.Select(x => x.ToString()))}");
+            }
+
+            OnVotedActions?.Invoke(this, selectedActions);
+
+            SendNewVotingRound();
         }
 
         private void TwitchRepository_OnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -42,7 +70,7 @@ namespace Zeepkist.RandomTrack
             string message = e.ChatMessage.Message;
             if (TwitchModActive)
             {
-                bool isAction = Enum.TryParse<TwitchActions>(message.Replace("!", ""), true, out TwitchActions selectedAction);
+                bool isAction = Enum.TryParse<TrackPartType>(message.Replace("!", ""), true, out TrackPartType selectedAction);
                 if (isAction && !VotedActions.ContainsKey(e.ChatMessage.Username))
                 {
                     VotedActions[e.ChatMessage.Username] = selectedAction;
@@ -69,7 +97,7 @@ namespace Zeepkist.RandomTrack
 
         private void SendCommands()
         {
-            string[] actions = Enum.GetValues(typeof(TwitchActions)).Cast<TwitchActions>().Select(x => x.ToString()).ToArray();
+            string[] actions = Enum.GetValues(typeof(TrackPartType)).Cast<TrackPartType>().Select(x => x.ToString()).ToArray();
 
 
             this.twitchRepository.SendMessage("Twitch Build Command List:");
@@ -85,7 +113,7 @@ namespace Zeepkist.RandomTrack
         }
     }
 
-    public enum TwitchActions
+    public enum TrackPartType
     {
         Straight,
         Left,

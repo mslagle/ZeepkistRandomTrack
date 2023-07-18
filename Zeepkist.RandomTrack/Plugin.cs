@@ -29,9 +29,9 @@ namespace Zeepkist.RandomTrack
             // Plugin startup logic
             Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
 
-            Plugin.KeyStartRandomTrack = this.Config.Bind<KeyCode>("Keys", "Create Random Track", KeyCode.Keypad1, "Pressing this will start creation of a random track");
+            Plugin.KeyStartRandomTrack = this.Config.Bind<KeyCode>("Keys", "Start Mod", KeyCode.Keypad1, "Pressing this will start creation of a random track or start twitch mode");
             Plugin.KeyPlaceRandomTrack = this.Config.Bind<KeyCode>("Keys", "Place Random Piece", KeyCode.Keypad2, "Pressing this will place next track piece");
-            Plugin.KeyEndRandomTrack = this.Config.Bind<KeyCode>("Keys", "End Random Track", KeyCode.Keypad3, "Pressing this will end the track with a finish");
+            Plugin.KeyEndRandomTrack = this.Config.Bind<KeyCode>("Keys", "End Mod", KeyCode.Keypad3, "Pressing this will end the track with a finish or end twitch mode");
             
             Plugin.CameraFollowsTrack = this.Config.Bind<bool>("Plugin", "Camera Follows Track", true, "The camera will follow new track pieces as they appear");
             Plugin.TwitchApiKey = this.Config.Bind<string>("Plugin", "Twitch Api Key", "", "Twitch API key to enable Twitch Voting.  Remove to disable this mode");
@@ -74,7 +74,7 @@ namespace Zeepkist.RandomTrack
         {
             if (Input.GetKeyDown(Plugin.KeyStartRandomTrack.Value))
             {
-                RandomTrackManager.CreateTrack();
+                RandomTrackManager.StartMod();
             }
 
             if (Input.GetKeyDown(Plugin.KeyPlaceRandomTrack.Value))
@@ -84,7 +84,7 @@ namespace Zeepkist.RandomTrack
 
             if (Input.GetKeyDown(Plugin.KeyEndRandomTrack.Value))
             {
-                RandomTrackManager.EndTrack();
+                RandomTrackManager.EndMod();
             }
 
             if (Plugin.CameraFollowsTrack.Value == true)

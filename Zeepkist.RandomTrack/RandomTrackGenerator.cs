@@ -48,7 +48,7 @@ namespace Zeepkist.RandomTrack
             CreateStart();
         }
 
-        public void Update()
+        public void Update(List<TrackPartType> twitchActions = new List<TrackPartType>)
         {
             if (!isBuilding)
             {
@@ -60,7 +60,7 @@ namespace Zeepkist.RandomTrack
                 GenerateNextBlock(blockOverrides[numberOfBlocks], true, false);
             } else
             {
-                GenerateNextBlock();
+                GenerateNextBlock(twitchActions);
             }
             
             numberOfBlocks++;
@@ -120,6 +120,10 @@ namespace Zeepkist.RandomTrack
             Vector3 lengthVector = new Vector3(selectedTrackPart.Part.Offset.x, 0, selectedTrackPart.Properties.boundingBoxSize.z);
             length += lengthVector.magnitude;
             height += tempOffset.y;
+        }
+
+        public SelectedTrackPart GenerateNextBlock(List<TrackPartType> )
+        {
         }
 
         public SelectedTrackPart GenerateNextBlock(int overrideId = -1, bool flipped = false, bool rotated = false)

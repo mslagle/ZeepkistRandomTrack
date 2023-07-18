@@ -44,14 +44,24 @@ namespace Zeepkist.RandomTrack
            
         }
 
-        public static void CreateTrack() {
+        public static void StartMod() {
             if (generator != null)
             {
-                twitchManager.Start();
+                if (twitchManager.TwitchModActive)
+                {
+                    twitchManager.Start();
+                    twitchManager.OnVotedActions += TwitchManager_OnVotedActions;
+                }
+                
 
-                //UnityEngine.Debug.Log("Creating a new random track");
-                //generator.Create();
+                UnityEngine.Debug.Log("Creating a new random track");
+                generator.Create();
             }
+        }
+
+        private static void TwitchManager_OnVotedActions(object sender, List<TrackPartType> e)
+        {
+            generator.Update(e);
         }
 
         public static void UpdateTrack() { 
@@ -62,7 +72,7 @@ namespace Zeepkist.RandomTrack
             }
         }
 
-        internal static void EndTrack()
+        internal static void EndMod()
         {
             if (generator != null)
             {
