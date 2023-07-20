@@ -14,12 +14,22 @@ namespace Zeepkist.RandomTrack.Models
         public bool Flipped { get; set; }
         public bool Rotated { get; set; }
 
-        public CreatedBlockPosition GeneratePosition(Vector3 currentPosition, Vector3 currentVector, Quaternion currentRotation)
+        public Vector3 CurrentPosition { get; set; }
+        public Vector3 CurrentVector { get; set; }
+        public Quaternion CurrentQuaternion { get; set; }
+
+        public CreatedBlockPosition CreatedBlockPosition { get; set; }
+
+        public void GeneratePosition(Vector3 currentPosition, Vector3 currentVector, Quaternion currentQuaternion)
         {
+            CurrentPosition = currentPosition;
+            CurrentVector = currentVector;
+            CurrentQuaternion = currentQuaternion;
+
             Vector3 tempVector = new Vector3(0, currentVector.y, 0);
             Vector3 tempPosition = currentPosition;
             Vector3 tempScale = new Vector3(1,1,1);
-            Quaternion tempRotation = currentRotation;
+            Quaternion tempRotation = currentQuaternion;
 
             if (Rotated)
             {
@@ -27,7 +37,7 @@ namespace Zeepkist.RandomTrack.Models
                 tempRotation = Quaternion.Euler(tempVector);
 
                 Vector3 additional = new Vector3(0, -1 * Part.Offset.y, Properties.boundingBoxSize.z - 16);
-                Vector3 additonalAfterRotate = currentRotation * additional;
+                Vector3 additonalAfterRotate = currentQuaternion * additional;
                 tempPosition += additonalAfterRotate;
             }
 
@@ -36,7 +46,7 @@ namespace Zeepkist.RandomTrack.Models
                 tempScale.x = -tempScale.x;
             }
 
-            return new CreatedBlockPosition() { Position = tempPosition, Vector = tempVector, Rotation = tempRotation, Scale = tempScale };
+            CreatedBlockPosition = new CreatedBlockPosition() { Position = tempPosition, Vector = tempVector, Rotation = tempRotation, Scale = tempScale };
         }
 
         public override string ToString()

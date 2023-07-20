@@ -8,6 +8,7 @@ using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 using UnityEngine;
+using Zeepkist.RandomTrack.Models;
 using Zeepkist.RandomTrack.Repositories;
 
 namespace Zeepkist.RandomTrack
@@ -16,6 +17,7 @@ namespace Zeepkist.RandomTrack
     {
         private readonly ITwitchRepository twitchRepository;
         public bool TwitchModActive { get; set; }
+        public bool TwitchModConnected { get; set; }
 
         public Dictionary<string, TrackPartType> VotedActions = new Dictionary<string, TrackPartType>();
         Timer votingTimer = new Timer(30 * 1000);
@@ -26,11 +28,18 @@ namespace Zeepkist.RandomTrack
         { 
             this.twitchRepository = twitchRepository;
             this.twitchRepository.OnMessageReceived += TwitchRepository_OnMessageReceived;
+            this.twitchRepository.OnJoinedChannel += TwitchRepository_OnJoinedChannel;
 
             TwitchModActive = false;
+            TwitchModConnected = false;
 
             votingTimer.Enabled = false;
             votingTimer.Elapsed += VotingTimer_Elapsed;
+        }
+
+        private void TwitchRepository_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
+        {
+            TwitchModConnected = true;
         }
 
         private void VotingTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -111,14 +120,5 @@ namespace Zeepkist.RandomTrack
         {
             this.twitchRepository.SendMessage("Twitch Track Building is Activated");
         }
-    }
-
-    public enum TrackPartType
-    {
-        Straight,
-        Left,
-        Right,
-        Booster,
-        End
     }
 }

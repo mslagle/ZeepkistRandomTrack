@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Zeepkist.RandomTrack.Models;
 using Zeepkist.RandomTrack.Repositories;
 
@@ -28,7 +29,10 @@ namespace Zeepkist.RandomTrack
         public bool isBuilding = false;
         public int numberOfBlocks = 0;
 
-        public int[] blockOverrides = new int[] { 3, 1189 };
+        public int[] blockOverrides = new int[] { };// { 3, 1189 };
+
+        public List<SelectedTrackPart> placedTrackParts = new List<SelectedTrackPart>();
+        public SelectedTrackPart pendingTrackPart = null;
 
         private readonly IZeepkistRepository zeepkist;
 
@@ -43,19 +47,20 @@ namespace Zeepkist.RandomTrack
             currentVector = new Vector3(0, 0, 0);
             currentQuaternion = new Quaternion(0,0,0,1);
             isBuilding = true;
-            numberOfBlocks = 0;
+            placedTrackParts.Clear();
+            pendingTrackPart = null;
 
             CreateStart();
         }
 
-        public void Update(List<TrackPartType> twitchActions = new List<TrackPartType>)
+        public void Update(List<TrackPartType> twitchActions = null)
         {
             if (!isBuilding)
             {
                 return;
             }
 
-            if (blockOverrides.Length > numberOfBlocks)
+            if (blockOverrides.Length > placedTrackParts.Count)
             {
                 GenerateNextBlock(blockOverrides[numberOfBlocks], true, false);
             } else
@@ -74,6 +79,7 @@ namespace Zeepkist.RandomTrack
             }
 
             GenerateNextBlock(END_BLOCK);
+            PlacePendingBlock();
             isBuilding = false;
         }
 
@@ -81,9 +87,11 @@ namespace Zeepkist.RandomTrack
         {
             // Add start block
             GenerateNextBlock(START_BLOCK);
+            PlacePendingBlock();
 
             // Add a booster directly after start
             GenerateNextBlock(BOOSTER_BLOCK);
+            PlacePendingBlock();
         }
 
         public void CalculateNextPosition(SelectedTrackPart selectedTrackPart)
@@ -122,34 +130,46 @@ namespace Zeepkist.RandomTrack
             height += tempOffset.y;
         }
 
-        public SelectedTrackPart GenerateNextBlock(List<TrackPartType> )
+        public SelectedTrackPart GenerateNextBlock(List<TrackPartType> allowedTrackParts = null)
         {
-        }
-
-        public SelectedTrackPart GenerateNextBlock(int overrideId = -1, bool flipped = false, bool rotated = false)
-        {
-            int blockId = overrideId;
-            SelectedTrackPart selectedTrackPart = new SelectedTrackPart();
-
-            if (overrideId == -1)
-            {
-                selectedTrackPart = GetNextRandomBlock();
-            } else
-            {
-                selectedTrackPart.Part = randomParts.First(x => x.Id == overrideId);
-                selectedTrackPart.Properties = zeepkist.GetGameBlock(overrideId);
-                selectedTrackPart.Flipped = flipped;
-                selectedTrackPart.Rotated = rotated;
-            }
-
-            var positions = selectedTrackPart.GeneratePosition(currentPosition, currentVector, currentQuaternion);
-            BlockProperties newBlock = zeepkist.CreateBlock(selectedTrackPart.Properties.blockID, positions.Position, positions.Rotation, positions.Scale);
+            SelectedTrackPart selectedTrackPart = GetNextRandomBlock(allowedTrackParts);
+            selectedTrackPart.GeneratePosition(currentPosition, currentVector, currentQuaternion);
+            pendingTrackPart = selectedTrackPart;
 
             CalculateNextPosition(selectedTrackPart);
             return selectedTrackPart;
         }
 
-        public SelectedTrackPart GetNextRandomBlock()
+        public void PlacePendingBlock()
+        {
+            if (pendingTrackPart != null)
+            {
+
+                BlockProperties newBlock = zeepkist.CreateBlock(pendingTrackPart.Properties.blockID, pendingTrackPart.CreatedBlockPosition.Position, 
+                    pendingTrackPart.CreatedBlockPosition.Rotation, pendingTrackPart.CreatedBlockPosition.Scale);
+                placedTrackParts.Add(pendingTrackPart);
+
+                pendingTrackPart = null;
+            }
+        }
+
+        public SelectedTrackPart GenerateNextBlock(int overrideId, bool flipped = false, bool rotated = false)
+        {
+            int blockId = overrideId;
+            SelectedTrackPart selectedTrackPart = new SelectedTrackPart();
+            selectedTrackPart.Part = randomParts.First(x => x.Id == overrideId);
+            selectedTrackPart.Properties = zeepkist.GetGameBlock(overrideId);
+            selectedTrackPart.Flipped = flipped;
+            selectedTrackPart.Rotated = rotated;
+
+            selectedTrackPart.GeneratePosition(currentPosition, currentVector, currentQuaternion);
+            pendingTrackPart = selectedTrackPart;
+
+            CalculateNextPosition(selectedTrackPart);
+            return selectedTrackPart;
+        }
+
+        public SelectedTrackPart GetNextRandomBlock(List<TrackPartType> allowedTrackParts = null)
         {
             // Get all blocks that are specified in CSV file and not start or finish
             List<RandomTrackPart> availableBlocks = randomParts.Where(x =>
@@ -165,9 +185,21 @@ namespace Zeepkist.RandomTrack
                     || x.EndingVector.x == -currentVector.x;
             }).ToList();
 
+            List<RandomTrackPart> allowedBlocks = matchingBlocks;
+            if (allowedTrackParts != null && allowedTrackParts.Count > 0)
+            {
+                allowedBlocks = matchingBlocks.Where(x => allowedTrackParts.Any(y => x.TrackPartTypes.HasFlag(y))).ToList();
+                if (allowedBlocks.Count == 0)
+                {
+                    var possibleTypes = matchingBlocks.SelectMany(x => x.TrackPartTypes.ToString().Split(',')).Distinct().ToList();
+                    throw new Exception($"No blocks could be placed of types: {string.Join(", ", allowedTrackParts.Select(x => x.ToString()))}, only possible block types are of {string.Join(", ", possibleTypes)}");
+                }
+            }
+
+
             // Randomly choose one
-            int random = UnityEngine.Random.Range(0, matchingBlocks.Count);
-            RandomTrackPart selectedPart = matchingBlocks[random];
+            int random = new System.Random().Next(0, allowedBlocks.Count - 1);
+            RandomTrackPart selectedPart = allowedBlocks[random];
             SelectedTrackPart selectedTrackPart = new SelectedTrackPart() { Part = selectedPart, Properties = zeepkist.GetGameBlock(selectedPart.Id) };
 
             // Must rotate if ending vector matches current vector and starting vector does not
@@ -183,7 +215,7 @@ namespace Zeepkist.RandomTrack
                 && -selectedPart.StartingVector.x == currentVector.x
                 && selectedTrackPart.Properties.flippable) 
             {
-                if (UnityEngine.Random.Range(0, 2) == 0)
+                if (new System.Random().Next(0, 1) == 0)
                 {
                     selectedTrackPart.Flipped = true;
                 }
@@ -195,7 +227,7 @@ namespace Zeepkist.RandomTrack
                     && selectedPart.EndingVector.x == -currentVector.x
                     && (selectedPart.Offset.y != 0 || selectedPart.EndingVector.x != 0))
             {
-                if (UnityEngine.Random.Range(0, 10) < 7)
+                if (new System.Random().Next(0, 10) < 8)
                 {
                     selectedTrackPart.Rotated = true;
                 }

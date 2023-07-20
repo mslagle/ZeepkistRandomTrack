@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using Zeepkist.RandomTrack.Models;
 using Zeepkist.RandomTrack.Repositories;
 
 namespace Zeepkist.RandomTrack
@@ -47,11 +48,11 @@ namespace Zeepkist.RandomTrack
         public static void StartMod() {
             if (generator != null)
             {
-                if (twitchManager.TwitchModActive)
+                /*if (twitchManager.TwitchModConnected)
                 {
                     twitchManager.Start();
                     twitchManager.OnVotedActions += TwitchManager_OnVotedActions;
-                }
+                }*/
                 
 
                 UnityEngine.Debug.Log("Creating a new random track");
@@ -61,7 +62,22 @@ namespace Zeepkist.RandomTrack
 
         private static void TwitchManager_OnVotedActions(object sender, List<TrackPartType> e)
         {
-            generator.Update(e);
+            try
+            {
+                generator.Update(e);
+            } 
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogError(ex);
+            }
+        }
+
+        public static void Update()
+        {
+            if (generator != null && generator.pendingTrackPart != null)
+            {
+                generator.PlacePendingBlock();
+            }
         }
 
         public static void UpdateTrack() { 
