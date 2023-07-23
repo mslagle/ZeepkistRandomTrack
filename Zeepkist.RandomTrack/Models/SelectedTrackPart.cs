@@ -36,7 +36,7 @@ namespace Zeepkist.RandomTrack.Models
                 tempVector.y += 180;
                 tempRotation = Quaternion.Euler(tempVector);
 
-                Vector3 additional = new Vector3(0, -1 * Part.Offset.y, Properties.boundingBoxSize.z - 16);
+                Vector3 additional = new Vector3(0, Part.Offset.y, Properties.boundingBoxSize.z - 16);
                 Vector3 additonalAfterRotate = currentQuaternion * additional;
                 tempPosition += additonalAfterRotate;
             }

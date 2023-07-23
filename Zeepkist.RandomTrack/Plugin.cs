@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -17,10 +18,9 @@ namespace Zeepkist.RandomTrack
         public static ConfigEntry<KeyCode> KeyEndRandomTrack {  get; private set; }
 
         public static ConfigEntry<bool> CameraFollowsTrack { get; private set; }
-        public static ConfigEntry<string> TwitchApiKey { get; private set; }
-        public static ConfigEntry<string> TwitchUsername { get; private set; }
-
         public static ConfigEntry<int> AverageSlope { get; private set; }
+
+        public static ConfigEntry<int> TwitchInterval { get; private set; }
 
         private void Awake()
         {
@@ -35,10 +35,9 @@ namespace Zeepkist.RandomTrack
             Plugin.KeyEndRandomTrack = this.Config.Bind<KeyCode>("Keys", "End Mod", KeyCode.Keypad3, "Pressing this will end the track with a finish or end twitch mode");
             
             Plugin.CameraFollowsTrack = this.Config.Bind<bool>("Plugin", "Camera Follows Track", true, "The camera will follow new track pieces as they appear");
-            Plugin.TwitchApiKey = this.Config.Bind<string>("Plugin", "Twitch Api Key", "", "Twitch API key to enable Twitch Voting.  Remove to disable this mode");
-            Plugin.TwitchUsername = this.Config.Bind<string>("Plugin", "Twitch Username", "", "Twitch Username to enable Twitch Voting.  Remove to disable this mode");
+            Plugin.AverageSlope = this.Config.Bind<int>("Track", "Average Slope", 5, "The average grade/slope the entire track will aim to have");
 
-            //Plugin.AverageSlope = this.Config.Bind<int>("Track", "Average Slope", 5, "The average grade/slope the entire track will aim to have");
+            Plugin.TwitchInterval = this.Config.Bind<int>("Twitch", "Twitch Interval", 15, "The interval between voting rounds");
         }
 
         public void OnGUI()
@@ -72,7 +71,9 @@ namespace Zeepkist.RandomTrack
                 labelStyle.fontSize = Mathf.FloorToInt(Screen.height / 40);
                 labelStyle.normal.textColor = Color.white;
 
-                string content = $"Voted Track Pieces:\n{string.Join("\n", RandomTrackManager.twitchManager?.VotedActions.Select(x => $"{x.Key} = {x.Value}"))}";
+                string content = $"Voted Track Pieces:\n"
+                    + $"Time Left: {Math.Floor(RandomTrackManager.twitchManager.votingTimer.TimeLeft / 1000)}\n"
+                    + $"{string.Join("\n", RandomTrackManager.twitchManager?.VotedActions.Select(x => $"{x.Key} = {x.Value}"))}";
 
                 GUIContent labelContent = new GUIContent(content);
                 Vector2 labelSize = labelStyle.CalcSize(labelContent);

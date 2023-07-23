@@ -8,6 +8,9 @@ using TwitchLib.Client.Models;
 using TwitchLib.Client;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Zeepkist.RandomTrack.Repositories
 {
@@ -19,6 +22,7 @@ namespace Zeepkist.RandomTrack.Repositories
         public event EventHandler<OnJoinedChannelArgs> OnJoinedChannel;
         public event EventHandler<OnMessageReceivedArgs> OnMessageReceived;
 
+        public bool Connect();
         public void SendMessage(string message);
     }
 
@@ -35,27 +39,62 @@ namespace Zeepkist.RandomTrack.Repositories
         public event EventHandler<OnMessageReceivedArgs> OnMessageReceived;
 
         public TwitchRepository() {
-            Username = Plugin.TwitchUsername.Value;
-            string oauth = Plugin.TwitchApiKey.Value;
 
-            if (string.IsNullOrEmpty(Username) )
+        }
+
+        public TwitchCredentials GetCredentials()
+        {
+            TwitchCredentials credentials = new TwitchCredentials();
+
+            string dllFile = System.Reflection.Assembly.GetAssembly(typeof(TwitchRepository)).Location;
+            string dllDirectory = Path.GetDirectoryName(dllFile);
+
+            string[] files = Directory.GetFiles(dllDirectory, "twitch.json", SearchOption.AllDirectories);
+            if (!files.Any())
+            {
+                return credentials;
+            }
+
+            try
+            {
+                credentials = JsonConvert.DeserializeObject<TwitchCredentials>(File.ReadAllText(files.FirstOrDefault()));
+                return credentials;
+            } catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                return credentials;
+            }
+        }
+
+        public bool Connect()
+        {
+            TwitchCredentials twitchCredentials = GetCredentials();
+
+            if (string.IsNullOrEmpty(twitchCredentials.Username))
             {
                 Debug.Log("Twitch username is null or empty, not connecting to twitch.");
                 isConnected = false;
-                return;
+                return false;
             }
+            Username = twitchCredentials.Username;
 
-            if (string.IsNullOrEmpty(oauth))
+            if (string.IsNullOrEmpty(twitchCredentials.ApiKey))
             {
                 Debug.Log("Twitch oauth token is null or empty, not connecting to twitch.");
                 isConnected = false;
-                return;
+                return false;
+            }
+
+            if (client.IsInitialized)
+            {
+                Debug.Log("Twitch already initialized, not re-initializing.");
+                return true;
             }
 
             try
             {
                 // https://twitchapps.com/tmi/
-                ConnectionCredentials credentials = new ConnectionCredentials(Username, oauth);
+                ConnectionCredentials credentials = new ConnectionCredentials(twitchCredentials.Username, twitchCredentials.ApiKey);
                 client.Initialize(credentials, Username);
 
                 client.OnMessageReceived += Client_OnMessageReceived;
@@ -63,11 +102,16 @@ namespace Zeepkist.RandomTrack.Repositories
                 client.OnJoinedChannel += Client_OnJoinedChannel;
                 client.OnLog += Client_OnLog;
                 client.Connect();
-            } catch (Exception e)
+                return true;
+            }
+            catch (Exception e)
             {
                 Debug.LogError(e);
+                return false;
             }
         }
+
+        public void Dispose() { }
 
         private void Client_OnLog(object sender, OnLogArgs e)
         {
@@ -98,5 +142,14 @@ namespace Zeepkist.RandomTrack.Repositories
             client.SendMessage(Username, message);
             Debug.Log($"Sent message: ${message}");
         }
+    }
+
+    public class TwitchCredentials
+    {
+        [JsonProperty("username")]
+        public string Username { get; set;}
+
+        [JsonProperty("api_key")]
+        public string ApiKey { get; set; }
     }
 }

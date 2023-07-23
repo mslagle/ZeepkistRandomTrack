@@ -15,6 +15,8 @@ namespace Zeepkist.RandomTrack.Models
         public Vector3 StartingVector { get; set; }
         public Vector3 EndingVector { get; set; }
         public Vector3 Offset { get; set; }
+        public bool IsFlipped { get; set; }
+        public bool IsRotated { get; set; }
         public TrackPartType TrackPartTypes { get; set; }
 
         public override string ToString()
@@ -27,7 +29,7 @@ namespace Zeepkist.RandomTrack.Models
 
         }
 
-        public RandomTrackPart(string name, int id, Vector3 startingVector, Vector3 endingVector, Vector3 offset, TrackPartType trackPartTypes = TrackPartType.Straight)
+        public RandomTrackPart(string name, int id, Vector3 startingVector, Vector3 endingVector, Vector3 offset, TrackPartType trackPartTypes = TrackPartType.Straight, bool isFlipped = false, bool isRotated = false)
         {
             Name = name;
             Id = id;
@@ -35,6 +37,8 @@ namespace Zeepkist.RandomTrack.Models
             EndingVector = endingVector;
             Offset = offset;
             TrackPartTypes = trackPartTypes;
+            IsFlipped = isFlipped;
+            IsRotated = isRotated;
         }
     }
 
@@ -49,5 +53,12 @@ namespace Zeepkist.RandomTrack.Models
         Checkpoint = 32,
         Up = 64,
         Down = 128
+    }
+
+    public class TrackPartOverride
+    {
+        public int PieceId { get; set; }
+        public bool IsFlipped { get; set; }
+        public bool IsRotated { get; set; }
     }
 }

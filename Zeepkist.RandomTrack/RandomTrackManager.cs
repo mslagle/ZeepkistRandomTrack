@@ -33,6 +33,12 @@ namespace Zeepkist.RandomTrack
                 generator.isBuilding = false;
             }
 
+            if (twitchManager.TwitchModConnected)
+            {
+                twitchManager.Stop();
+                twitchManager.OnVotedActions -= TwitchManager_OnVotedActions;
+            }
+
             RandomTrackManager.central = null;
             RandomTrackManager.inspector = null;
 
@@ -48,11 +54,11 @@ namespace Zeepkist.RandomTrack
         public static void StartMod() {
             if (generator != null)
             {
-                /*if (twitchManager.TwitchModConnected)
+                if (twitchManager.TwitchModConnected)
                 {
                     twitchManager.Start();
                     twitchManager.OnVotedActions += TwitchManager_OnVotedActions;
-                }*/
+                }
                 
 
                 UnityEngine.Debug.Log("Creating a new random track");
@@ -68,6 +74,7 @@ namespace Zeepkist.RandomTrack
             } 
             catch (Exception ex)
             {
+                twitchManager.SendMessage(ex.Message);
                 UnityEngine.Debug.LogError(ex);
             }
         }
@@ -92,6 +99,12 @@ namespace Zeepkist.RandomTrack
         {
             if (generator != null)
             {
+                if (twitchManager.TwitchModConnected)
+                {
+                    twitchManager.Stop();
+                    twitchManager.OnVotedActions -= TwitchManager_OnVotedActions;
+                }
+
                 UnityEngine.Debug.Log("Adding a finish to the track");
                 generator.End();
             }

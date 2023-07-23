@@ -20,13 +20,14 @@ namespace Zeepkist.RandomTrack
         public bool TwitchModConnected { get; set; }
 
         public Dictionary<string, TrackPartType> VotedActions = new Dictionary<string, TrackPartType>();
-        Timer votingTimer = new Timer(30 * 1000);
+        public TimerPlus votingTimer = new TimerPlus();
 
         public event EventHandler<List<TrackPartType>> OnVotedActions;
 
         public TwitchManager(ITwitchRepository twitchRepository) 
         { 
             this.twitchRepository = twitchRepository;
+            this.twitchRepository.Connect();
             this.twitchRepository.OnMessageReceived += TwitchRepository_OnMessageReceived;
             this.twitchRepository.OnJoinedChannel += TwitchRepository_OnJoinedChannel;
 
@@ -34,6 +35,7 @@ namespace Zeepkist.RandomTrack
             TwitchModConnected = false;
 
             votingTimer.Enabled = false;
+            votingTimer.Interval = Plugin.TwitchInterval.Value * 1000;
             votingTimer.Elapsed += VotingTimer_Elapsed;
         }
 
@@ -87,6 +89,12 @@ namespace Zeepkist.RandomTrack
             }
         }
 
+        public void Stop()
+        {
+            TwitchModActive = false;
+            votingTimer.Enabled = false;
+        }
+
         public void Start()
         {
             TwitchModActive = true;
@@ -98,7 +106,7 @@ namespace Zeepkist.RandomTrack
 
         private void SendNewVotingRound()
         {
-            this.twitchRepository.SendMessage("New voting round started, you have 30 seconds to vote for next track.");
+            //this.twitchRepository.SendMessage("New voting round started, you have 30 seconds to vote for next track.");
             VotedActions.Clear();
             votingTimer.Start();
             votingTimer.Enabled=true;
@@ -119,6 +127,11 @@ namespace Zeepkist.RandomTrack
         private void SendStartMessage()
         {
             this.twitchRepository.SendMessage("Twitch Track Building is Activated");
+        }
+
+        public void SendMessage(string message)
+        {
+            this.twitchRepository.SendMessage(message);
         }
     }
 }

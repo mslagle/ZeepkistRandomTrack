@@ -23,6 +23,12 @@
     <PackageReference Include="TwitchLib.Client" Version="3.3.1" />
     <PackageReference Include="Zeepkist.GameLibs" Version="1.0.0-alpha.15.29.348" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="twitch.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
  
   <Target Name="CopyToZeepkist" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug'">
     <Message Text="Creating mono debug edition of plugin" Importance="high" />

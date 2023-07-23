@@ -23,13 +23,14 @@ namespace Zeepkist.RandomTrack
 
         double length = 0;
         double height = 0;
+        double averageSlope = 0;
 
         List<RandomTrackPart> randomParts;
 
         public bool isBuilding = false;
         public int numberOfBlocks = 0;
 
-        public int[] blockOverrides = new int[] { };// { 3, 1189 };
+        public List<TrackPartOverride> blockOverrides = new List<TrackPartOverride>();
 
         public List<SelectedTrackPart> placedTrackParts = new List<SelectedTrackPart>();
         public SelectedTrackPart pendingTrackPart = null;
@@ -60,9 +61,11 @@ namespace Zeepkist.RandomTrack
                 return;
             }
 
-            if (blockOverrides.Length > placedTrackParts.Count)
+            if (blockOverrides.Count > placedTrackParts.Count)
             {
-                GenerateNextBlock(blockOverrides[numberOfBlocks], true, false);
+                GenerateNextBlock(blockOverrides[numberOfBlocks].PieceId, 
+                    blockOverrides[numberOfBlocks].IsFlipped,
+                    blockOverrides[numberOfBlocks].IsRotated);
             } else
             {
                 GenerateNextBlock(twitchActions);
@@ -99,18 +102,6 @@ namespace Zeepkist.RandomTrack
             var tempOffset = selectedTrackPart.Part.Offset;
             var tempVector = selectedTrackPart.Rotated ? -selectedTrackPart.Part.StartingVector : selectedTrackPart.Part.EndingVector;
 
-            // If flipped - do some magic
-            if (selectedTrackPart.Flipped)
-            {
-                tempOffset.x = -1 * tempOffset.x;
-                tempVector.y = -1 * tempVector.y;
-            }
-
-            // If rotated - do more magic
-            if (selectedTrackPart.Rotated) {
-                tempOffset.y = -1 * tempOffset.y;
-            }
-
             // Calculate new rotation vector
             Vector3 tempRotation = new Vector3(tempVector.x, currentVector.y + tempVector.y, tempVector.z);
             Vector3 newRotation = new Vector3(0, tempRotation.y, 0);
@@ -128,6 +119,7 @@ namespace Zeepkist.RandomTrack
             Vector3 lengthVector = new Vector3(selectedTrackPart.Part.Offset.x, 0, selectedTrackPart.Properties.boundingBoxSize.z);
             length += lengthVector.magnitude;
             height += tempOffset.y;
+            averageSlope = (-height / length) * 100;
         }
 
         public SelectedTrackPart GenerateNextBlock(List<TrackPartType> allowedTrackParts = null)
@@ -185,6 +177,28 @@ namespace Zeepkist.RandomTrack
                     || x.EndingVector.x == -currentVector.x;
             }).ToList();
 
+            // Dont force slope for 5 pieces
+            if (allowedTrackParts == null && placedTrackParts.Count > 5)
+            {
+                // Too shallow, lets go down
+                if (averageSlope < (Plugin.AverageSlope.Value / 2))
+                {
+                    allowedTrackParts = new List<TrackPartType>() { TrackPartType.Down };
+                }
+
+                // Too step, lets go up
+                if (averageSlope > (Plugin.AverageSlope.Value + (Plugin.AverageSlope.Value / 2)))
+                {
+                    allowedTrackParts = new List<TrackPartType>() { TrackPartType.Up };
+                }
+            }
+
+            // Dont allow up pieces under 5 pieces
+            if (allowedTrackParts == null && placedTrackParts.Count <= 5)
+            {
+                allowedTrackParts = Enum.GetValues(typeof(TrackPartType)).Cast<TrackPartType>().Where(x =>  x != TrackPartType.Up).ToList();
+            }
+
             List<RandomTrackPart> allowedBlocks = matchingBlocks;
             if (allowedTrackParts != null && allowedTrackParts.Count > 0)
             {
@@ -196,42 +210,12 @@ namespace Zeepkist.RandomTrack
                 }
             }
 
-
             // Randomly choose one
-            int random = new System.Random().Next(0, allowedBlocks.Count - 1);
+            int random = new System.Random().Next(0, allowedBlocks.Count);
             RandomTrackPart selectedPart = allowedBlocks[random];
             SelectedTrackPart selectedTrackPart = new SelectedTrackPart() { Part = selectedPart, Properties = zeepkist.GetGameBlock(selectedPart.Id) };
-
-            // Must rotate if ending vector matches current vector and starting vector does not
-            if (selectedPart.StartingVector.x != currentVector.x 
-                && selectedPart.EndingVector.x == -currentVector.x)
-            {
-                selectedTrackPart.Rotated = true;
-            }
-
-            // Lets add some random-ness
-            // If starting vector matches either way and part is flippable - lets sometimes flip it
-            if (selectedPart.StartingVector.x == currentVector.x 
-                && -selectedPart.StartingVector.x == currentVector.x
-                && selectedTrackPart.Properties.flippable) 
-            {
-                if (new System.Random().Next(0, 1) == 0)
-                {
-                    selectedTrackPart.Flipped = true;
-                }
-            }
-
-            // If both start and end vector matches either way - lets rotate sometimes
-            // Only flip if the part can offset up or vectors up
-            if (selectedPart.StartingVector.x == currentVector.x
-                    && selectedPart.EndingVector.x == -currentVector.x
-                    && (selectedPart.Offset.y != 0 || selectedPart.EndingVector.x != 0))
-            {
-                if (new System.Random().Next(0, 10) < 8)
-                {
-                    selectedTrackPart.Rotated = true;
-                }
-            }
+            selectedTrackPart.Rotated = selectedPart.IsRotated;
+            selectedTrackPart.Flipped = selectedPart.IsFlipped;
 
             return selectedTrackPart;
         }
