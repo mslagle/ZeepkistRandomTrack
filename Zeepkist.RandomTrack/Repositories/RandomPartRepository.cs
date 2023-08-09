@@ -49,11 +49,14 @@ namespace Zeepkist.RandomTrack.Repositories
             parts.AddRange(CreateMultiples(new RandomTrackPart("Step Up Long", 6, new Vector3(), new Vector3(), new Vector3(0,8,0), TrackPartType.Up), false, true));
             parts.AddRange(CreateMultiples(new RandomTrackPart("Step Up 4L", 1255, new Vector3(), new Vector3(), new Vector3(0,8,0), TrackPartType.Up), false, true));
 
-            /*
-            parts.AddRange(CreateMultiples(new RandomTrackPart("Road Slope Bottom", 9, new Vector3(), new Vector3(45,0,0), new Vector3(0, 16, 0), TrackPartType.Up | TrackPartType.Down));
-            parts.AddRange(CreateMultiples(new RandomTrackPart("Road Slope", 10, new Vector3(45,0,0), new Vector3(45,0,0), new Vector3(0, 16, 0), TrackPartType.Up | TrackPartType.Down));
-            parts.AddRange(CreateMultiples(new RandomTrackPart("Step Up 4L", 8, new Vector3(45,0,0), new Vector3(), new Vector3(0, 16, 0), TrackPartType.Up | TrackPartType.Down));
-            */
+            // Dont create multiples here - up is still up
+            parts.Add(new RandomTrackPart("Road Slope Top Medium", 8, new Vector3(45, 0, 0), new Vector3(), new Vector3(0, 16, 0), TrackPartType.Down));
+            parts.Add(new RandomTrackPart("Road Slope Bottom Medium", 9, new Vector3(), new Vector3(45,0,0), new Vector3(0, 16, 0), TrackPartType.Up));
+            parts.AddRange(CreateMultiples(new RandomTrackPart("Road Slope", 10, new Vector3(45,0,0), new Vector3(45,0,0), new Vector3(0, 16, 0), TrackPartType.Up), false, true));
+
+            parts.Add(new RandomTrackPart("Road Slope Top Medium Rotated", 8, new Vector3(), new Vector3(-45, 0, 0), new Vector3(0, -16, 0), TrackPartType.Down, false, true));
+            parts.Add(new RandomTrackPart("Road Slope Bottom Medium Rotated", 9, new Vector3(-45, 0, 0), new Vector3(), new Vector3(0,- 16, 0), TrackPartType.Up, false, true));
+
             return parts;
         }
 

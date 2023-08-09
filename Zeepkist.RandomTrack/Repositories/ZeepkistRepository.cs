@@ -14,6 +14,7 @@ namespace Zeepkist.RandomTrack.Repositories
         public List<BlockProperties> GetAllGameBlocks();
         public BlockProperties CreateBlock(int blockId, Vector3 position, Quaternion rotation, Vector3 scale);
         public void UnSelectEverything();
+        public void CreateNotification(string text, float duration);
     }
 
     public class ZeepkistRepository : IZeepkistRepository
@@ -53,6 +54,11 @@ namespace Zeepkist.RandomTrack.Repositories
         public void UnSelectEverything()
         {
             central.selection.DeselectAllBlocks(true, "ClickNothing");
+        }
+
+        public void CreateNotification(string text, float duration)
+        {
+            PlayerManager.Instance.messenger.Log(text, duration);
         }
 
         public void CreateLabel(string text, LabelPosition position)

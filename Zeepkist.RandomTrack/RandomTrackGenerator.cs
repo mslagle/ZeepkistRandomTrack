@@ -100,7 +100,7 @@ namespace Zeepkist.RandomTrack
         public void CalculateNextPosition(SelectedTrackPart selectedTrackPart)
         {
             var tempOffset = selectedTrackPart.Part.Offset;
-            var tempVector = selectedTrackPart.Rotated ? -selectedTrackPart.Part.StartingVector : selectedTrackPart.Part.EndingVector;
+            var tempVector = selectedTrackPart.Part.EndingVector;
 
             // Calculate new rotation vector
             Vector3 tempRotation = new Vector3(tempVector.x, currentVector.y + tempVector.y, tempVector.z);
@@ -120,6 +120,8 @@ namespace Zeepkist.RandomTrack
             length += lengthVector.magnitude;
             height += tempOffset.y;
             averageSlope = (-height / length) * 100;
+
+            zeepkist.CreateNotification($"Average Slope: {Math.Floor(averageSlope)}%", 1f);
         }
 
         public SelectedTrackPart GenerateNextBlock(List<TrackPartType> allowedTrackParts = null)
@@ -173,8 +175,7 @@ namespace Zeepkist.RandomTrack
             // Now get all blocks that match the ending vector (only care about the x vector for now)
             List<RandomTrackPart> matchingBlocks = availableBlocks.Where(x =>
             {
-                return x.StartingVector.x == currentVector.x
-                    || x.EndingVector.x == -currentVector.x;
+                return x.StartingVector.x == currentVector.x;
             }).ToList();
 
             // Dont force slope for 5 pieces
