@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Zeepkist.RandomTrack.Models;
+using Zeepkist.RandomTrack.Utils;
 using static Mono.Security.X509.X520;
 
 namespace Zeepkist.RandomTrack.Repositories
@@ -27,7 +28,7 @@ namespace Zeepkist.RandomTrack.Repositories
             parts.Add(new RandomTrackPart("End", 2, new Vector3(), new Vector3(), new Vector3(), TrackPartType.End));
             parts.Add(new RandomTrackPart("Booster", 69, new Vector3(), new Vector3(), new Vector3(), TrackPartType.Booster));
             parts.Add(new RandomTrackPart("Checkpoint", 22, new Vector3(), new Vector3(), new Vector3(), TrackPartType.Checkpoint));
-
+            
             // Basic track pieces
             parts.Add(new RandomTrackPart("Straight", 0, new Vector3(), new Vector3(), new Vector3()));
 
@@ -56,6 +57,9 @@ namespace Zeepkist.RandomTrack.Repositories
 
             parts.Add(new RandomTrackPart("Road Slope Top Medium Rotated", 8, new Vector3(), new Vector3(-45, 0, 0), new Vector3(0, -16, 0), TrackPartType.Down, false, true));
             parts.Add(new RandomTrackPart("Road Slope Bottom Medium Rotated", 9, new Vector3(-45, 0, 0), new Vector3(), new Vector3(0,- 16, 0), TrackPartType.Up, false, true));
+            
+            parts.Add(Blueprints.CreateSmallLoop());
+            parts.Add(Blueprints.CreateWallGap());
 
             return parts;
         }

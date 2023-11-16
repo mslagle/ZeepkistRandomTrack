@@ -42,51 +42,7 @@ namespace Zeepkist.RandomTrack
 
         public void OnGUI()
         {
-            if (RandomTrackManager.twitchManager?.TwitchModConnected == true)
-            {
-                GUIStyle labelStyle = new GUIStyle(GUI.skin.box);
-                labelStyle.wordWrap = true;
-                labelStyle.alignment = TextAnchor.MiddleCenter;
-                labelStyle.fontSize = Mathf.FloorToInt(Screen.height / 40);
-                labelStyle.normal.textColor = Color.white;
 
-                GUIContent labelContent = new GUIContent("Twitch Mod Connected");
-                Vector2 labelSize = labelStyle.CalcSize(labelContent);
-                int padding = Mathf.CeilToInt(Screen.width / 200f);
-                Vector2 newSize = new Vector2(labelSize.x + padding, labelSize.y + padding);
-                Rect boxRect = new Rect(0, 0, 0, 0);
-                boxRect.width = newSize.x;
-                boxRect.height = newSize.y;
-
-                Vector2 bottomScreenPosition = new Vector2(Display.main.renderingWidth / 2 - boxRect.width / 2, Display.main.renderingHeight - boxRect.height - 50);
-                boxRect.position = bottomScreenPosition;
-                GUI.Box(boxRect, labelContent, labelStyle);
-            }
-
-            if (RandomTrackManager.twitchManager?.TwitchModActive == true)
-            {
-                GUIStyle labelStyle = new GUIStyle(GUI.skin.box);
-                labelStyle.wordWrap = true;
-                labelStyle.alignment = TextAnchor.MiddleCenter;
-                labelStyle.fontSize = Mathf.FloorToInt(Screen.height / 40);
-                labelStyle.normal.textColor = Color.white;
-
-                string content = $"Voted Track Pieces:\n"
-                    + $"Time Left: {Math.Floor(RandomTrackManager.twitchManager.votingTimer.TimeLeft / 1000)}\n"
-                    + $"{string.Join("\n", RandomTrackManager.twitchManager?.VotedActions.Select(x => $"{x.Key} = {x.Value}"))}";
-
-                GUIContent labelContent = new GUIContent(content);
-                Vector2 labelSize = labelStyle.CalcSize(labelContent);
-                int padding = Mathf.CeilToInt(Screen.width / 200f);
-                Vector2 newSize = new Vector2(labelSize.x + padding, labelSize.y + padding);
-                Rect boxRect = new Rect(0, 0, 0, 0);
-                boxRect.width = newSize.x;
-                boxRect.height = newSize.y;
-
-                Vector2 leftScreenPosition = new Vector2(20, 50);
-                boxRect.position = leftScreenPosition;
-                GUI.Box(boxRect, labelContent, labelStyle);
-            }
         }
 
         private void OnDestroy()

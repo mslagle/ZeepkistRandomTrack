@@ -15,7 +15,6 @@ namespace Zeepkist.RandomTrack
         public static LEV_LevelEditorCentral central;
 
         public static RandomTrackGenerator generator;
-        public static TwitchManager twitchManager;
 
         public static void LevelEditorAwake(LEV_LevelEditorCentral central)
         {
@@ -23,7 +22,6 @@ namespace Zeepkist.RandomTrack
             RandomTrackManager.inspector = central.inspector;
 
             RandomTrackManager.generator = new RandomTrackGenerator(new ZeepkistRepository(), new RandomPartRepository());
-            RandomTrackManager.twitchManager = new TwitchManager(new TwitchRepository());
         }
 
         public static void LevelEditorDestroy()
@@ -33,17 +31,10 @@ namespace Zeepkist.RandomTrack
                 generator.isBuilding = false;
             }
 
-            if (twitchManager.TwitchModConnected)
-            {
-                twitchManager.Stop();
-                twitchManager.OnVotedActions -= TwitchManager_OnVotedActions;
-            }
-
             RandomTrackManager.central = null;
             RandomTrackManager.inspector = null;
 
             RandomTrackManager.generator = null;
-            RandomTrackManager.twitchManager = null;
         }
 
         public static void LevelEditorUpdate()
@@ -54,28 +45,8 @@ namespace Zeepkist.RandomTrack
         public static void StartMod() {
             if (generator != null)
             {
-                if (twitchManager.TwitchModConnected)
-                {
-                    twitchManager.Start();
-                    twitchManager.OnVotedActions += TwitchManager_OnVotedActions;
-                }
-                
-
                 UnityEngine.Debug.Log("Creating a new random track");
                 generator.Create();
-            }
-        }
-
-        private static void TwitchManager_OnVotedActions(object sender, List<TrackPartType> e)
-        {
-            try
-            {
-                generator.Update(e);
-            } 
-            catch (Exception ex)
-            {
-                twitchManager.SendMessage(ex.Message);
-                UnityEngine.Debug.LogError(ex);
             }
         }
 
@@ -99,12 +70,6 @@ namespace Zeepkist.RandomTrack
         {
             if (generator != null)
             {
-                if (twitchManager.TwitchModConnected)
-                {
-                    twitchManager.Stop();
-                    twitchManager.OnVotedActions -= TwitchManager_OnVotedActions;
-                }
-
                 UnityEngine.Debug.Log("Adding a finish to the track");
                 generator.End();
             }

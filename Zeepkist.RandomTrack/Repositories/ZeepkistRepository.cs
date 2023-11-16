@@ -12,7 +12,7 @@ namespace Zeepkist.RandomTrack.Repositories
     {
         public BlockProperties GetGameBlock(int blockId);
         public List<BlockProperties> GetAllGameBlocks();
-        public BlockProperties CreateBlock(int blockId, Vector3 position, Quaternion rotation, Vector3 scale);
+        public BlockProperties CreateBlock(int blockId, Vector3 position, Quaternion rotation, Vector3 scale, string properties = "");
         public void UnSelectEverything();
         public void CreateNotification(string text, float duration);
     }
@@ -38,16 +38,37 @@ namespace Zeepkist.RandomTrack.Repositories
             return gameBlocks[blockId];
         }
 
-        public BlockProperties CreateBlock(int blockId, Vector3 position, Quaternion rotation, Vector3 scale)
+        public BlockProperties CreateBlock(int blockId, Vector3 position, Quaternion rotation, Vector3 scale, string properties = null)
         {
+            
             BlockProperties newBlock = UnityEngine.Object.Instantiate<BlockProperties>(gameBlocks[blockId]);
             newBlock.isEditor = true;
+            newBlock.CreateBlock();
             newBlock.propertyScripts.ForEach(x => x.CreateBlock(newBlock));
+
             newBlock.transform.position = position;
             newBlock.transform.rotation = rotation;
             newBlock.transform.localScale = scale;
 
-            newBlock.CreateBlock();
+            List<float> existingProperties = new List<float>(newBlock.properties);
+            if (!string.IsNullOrEmpty(properties))
+            {
+                float[] newProperties = properties.Split(',').Select(x => float.Parse(x.Trim())).ToArray();
+
+                int startIndex = newBlock.properties.Count() - newProperties.Count();
+                for (int i = startIndex; i < newBlock.properties.Count(); i++)
+                {
+                    existingProperties[i] = newProperties[i - startIndex];
+                }
+            }
+
+            var temp = newBlock.ConvertBlockToJSON_v15();
+            temp.properties = existingProperties;
+
+            newBlock.properties.Clear();
+            newBlock.LoadProperties_v15(temp, false);
+            newBlock.isLoading = false;
+
             return newBlock;
         }
 

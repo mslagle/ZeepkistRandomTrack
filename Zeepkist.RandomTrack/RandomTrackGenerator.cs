@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Zeepkist.RandomTrack.Models;
 using Zeepkist.RandomTrack.Repositories;
+using Zeepkist.RandomTrack.Utils;
 
 namespace Zeepkist.RandomTrack
 {
@@ -20,6 +21,10 @@ namespace Zeepkist.RandomTrack
         public Vector3 currentPosition = new Vector3();
         public Vector3 currentVector = new Vector3();
         public Quaternion currentQuaternion = new Quaternion();
+
+        public Vector3 previousPosition = new Vector3();
+        public Vector3 previousVector = new Vector3();
+        public Quaternion previousQuaternion = new Quaternion();
 
         double length = 0;
         double height = 0;
@@ -54,7 +59,7 @@ namespace Zeepkist.RandomTrack
             CreateStart();
         }
 
-        public void Update(List<TrackPartType> twitchActions = null)
+        public void Update()
         {
             if (!isBuilding)
             {
@@ -68,7 +73,7 @@ namespace Zeepkist.RandomTrack
                     blockOverrides[numberOfBlocks].IsRotated);
             } else
             {
-                GenerateNextBlock(twitchActions);
+                GenerateNextBlock();
             }
             
             numberOfBlocks++;
@@ -99,6 +104,10 @@ namespace Zeepkist.RandomTrack
 
         public void CalculateNextPosition(SelectedTrackPart selectedTrackPart)
         {
+            previousPosition = currentPosition;
+            previousVector = currentVector;
+            previousQuaternion = currentQuaternion;
+           
             var tempOffset = selectedTrackPart.Part.Offset;
             var tempVector = selectedTrackPart.Part.EndingVector;
 
@@ -138,10 +147,25 @@ namespace Zeepkist.RandomTrack
         {
             if (pendingTrackPart != null)
             {
+                if (pendingTrackPart.Part.GetType() == typeof(BlueprintTrackPart))
+                {
+                    UnityEngine.Debug.Log("Adding a blueprint to the track");
 
-                BlockProperties newBlock = zeepkist.CreateBlock(pendingTrackPart.Properties.blockID, pendingTrackPart.CreatedBlockPosition.Position, 
-                    pendingTrackPart.CreatedBlockPosition.Rotation, pendingTrackPart.CreatedBlockPosition.Scale);
-                placedTrackParts.Add(pendingTrackPart);
+                    BlueprintTrackPart blueprintTrackPart = (BlueprintTrackPart)pendingTrackPart.Part;
+                    foreach (var part in blueprintTrackPart.Parts){
+                        CreatedBlockPosition createdBlockPosition = Blueprints.CreateBlockPosition(part, previousPosition, previousVector);
+
+                        BlockProperties newBlock = zeepkist.CreateBlock(part.Id, createdBlockPosition.Position,
+                            createdBlockPosition.Rotation, createdBlockPosition.Scale, part.Properties);
+                        placedTrackParts.Add(pendingTrackPart);
+                    }
+                } 
+                else
+                {
+                    BlockProperties newBlock = zeepkist.CreateBlock(pendingTrackPart.Properties.blockID, pendingTrackPart.CreatedBlockPosition.Position,
+                        pendingTrackPart.CreatedBlockPosition.Rotation, pendingTrackPart.CreatedBlockPosition.Scale);
+                    placedTrackParts.Add(pendingTrackPart);
+                }
 
                 pendingTrackPart = null;
             }
@@ -184,13 +208,13 @@ namespace Zeepkist.RandomTrack
                 // Too shallow, lets go down
                 if (averageSlope < (Plugin.AverageSlope.Value / 2))
                 {
-                    allowedTrackParts = new List<TrackPartType>() { TrackPartType.Down };
+                    //allowedTrackParts = new List<TrackPartType>() { TrackPartType.Down, TrackPartType.Booster };
                 }
 
                 // Too step, lets go up
                 if (averageSlope > (Plugin.AverageSlope.Value + (Plugin.AverageSlope.Value / 2)))
                 {
-                    allowedTrackParts = new List<TrackPartType>() { TrackPartType.Up };
+                    //allowedTrackParts = new List<TrackPartType>() { TrackPartType.Up };
                 }
             }
 
